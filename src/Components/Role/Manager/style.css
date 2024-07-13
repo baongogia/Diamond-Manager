@@ -1,0 +1,7 @@
+.css-n3fyjk-MuiDataGrid-root .MuiDataGrid-cell{
+    height: 130px !important;
+}
+
+.css-n3fyjk-MuiDataGrid-root .MuiDataGrid-virtualScrollerContent .MuiDataGrid-row{
+    min-height: 130px !important;
+}
