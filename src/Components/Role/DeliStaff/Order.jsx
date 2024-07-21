@@ -5,6 +5,7 @@ import { TextField, Button } from "@mui/material";
 import { StaffActionContext } from "../SaleStaff/StaffActionProvider";
 import axios from "axios";
 import DeliStaffDetailModal from "./DeliStaffDetailModal";
+import { useNavigate } from "react-router-dom";
 
 export const Order = () => {
   const { confirmedOrders, setConfirmedOrders } =
@@ -14,6 +15,7 @@ export const Order = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
+  const navigate = useNavigate();
   useEffect(() => {
     const storedConfirmedOrders = localStorage.getItem("confirmedOrders");
     if (storedConfirmedOrders) {
@@ -234,8 +236,8 @@ export const Order = () => {
   };
 
   const handleRowClick = (params) => {
+    navigate(`DeliStaffDetailModal/${params.row.OrderID}`);
     setSelectedOrderId(params.row.OrderID);
-    setModalOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -268,11 +270,6 @@ export const Order = () => {
         pageSizeOptions={[5, 10]}
         // checkboxSelection
         onRowClick={handleRowClick}
-      />
-      <DeliStaffDetailModal
-        open={modalOpen}
-        handleClose={handleCloseModal}
-        orderId={selectedOrderId}
       />
     </div>
   );

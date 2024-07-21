@@ -5,6 +5,7 @@ import { TextField, Button } from "@mui/material";
 import axios from "axios";
 import { StaffActionContext } from "./StaffActionProvider";
 import SaleOrderDetailModal from "./SaleOrderDetailModal";
+import { useNavigate } from "react-router-dom";
 
 export const SaleOrder = () => {
   const { confirmedOrders, setConfirmedOrders, setStaffAction } =
@@ -233,10 +234,10 @@ export const SaleOrder = () => {
   const handleSearchChange = (event) => {
     setSearchDate(event.target.value);
   };
-
+  const navigate = useNavigate();
   const handleRowClick = (params) => {
+    navigate(`SaleOrderDetailModal/${params.row.OrderID}`);
     setSelectedOrder(params.row.OrderID);
-    setModalOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -267,11 +268,6 @@ export const SaleOrder = () => {
         }}
         pageSizeOptions={[5, 10]}
         onRowClick={handleRowClick}
-      />
-      <SaleOrderDetailModal
-        open={modalOpen}
-        handleClose={handleCloseModal}
-        orderId={selectedOrder}
       />
     </div>
   );

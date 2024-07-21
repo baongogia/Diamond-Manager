@@ -21,6 +21,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormHelperText,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ReceiptIcon from "@mui/icons-material/Receipt";
@@ -44,6 +45,8 @@ import LogoutButton from "../LogoutButton";
 import { useNavigate } from "react-router-dom";
 import { OrderHistory } from "./OrderHistory";
 import HistoryIcon from "@mui/icons-material/History";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { CardContent } from "@mui/material";
 
 const Sidebar = styled(Box)(({ theme }) => ({
   height: "100vh",
@@ -87,36 +90,6 @@ const EditButton = styled(Button)(({ theme }) => ({
   left: "50%",
   transform: "translate(-50%, -50%)",
 }));
-
-const data = {
-  series: [
-    {
-      name: "Employees Info",
-      data: [10, 15, 9, 20, 25, 20, 30],
-    },
-  ],
-  options: {
-    chart: {
-      type: "line",
-      height: "auto",
-    },
-    xaxis: {
-      categories: [
-        "0 Jan",
-        "31 Jan",
-        "22 Feb",
-        "15 Mar",
-        "05 Apr",
-        "26 Apr",
-        "17 May",
-      ],
-    },
-    yaxis: {
-      min: 0,
-      forceNiceScale: true,
-    },
-  },
-};
 
 const ManagerPage = () => {
   const columns = [
@@ -285,6 +258,212 @@ const ManagerPage = () => {
     setCaratWeightRange(newValue);
   };
 
+  const handleCloseClick = () => {
+    setEditingCard(null);
+  };
+
+  const [customerRanking, setCustomerRanking] = useState([]);
+  const [labels, setLabels] = useState([]);
+  const [series, setSeries] = useState([]);
+
+  const { ordercount, setOrderCount } = useState([]);
+
+  useEffect(() => {
+    const fetchCustomerRanking = async () => {
+      try {
+        const response = await axios.get(
+          "https://diamondstoreapi.azurewebsites.net/api/Accounts/CustomerRankingCount"
+        );
+        const data = response.data;
+
+        // Extract labels and series data from response
+        const fetchedLabels = Object.keys(data);
+        const fetchedSeries = Object.values(data);
+
+        setLabels(fetchedLabels);
+        setSeries(fetchedSeries);
+      } catch (error) {
+        console.error("Error fetching customer ranking data:", error);
+      }
+    };
+
+    fetchCustomerRanking();
+  }, []);
+
+  const [labels1, setLabels1] = useState([]);
+  const [series1, setSeries1] = useState([]);
+
+  useEffect(() => {
+    const fetchOrderCount = async () => {
+      try {
+        const response = await axios.get(
+          "https://diamondstoreapi.azurewebsites.net/api/Order/OrderCount"
+        );
+        const data = response.data;
+
+        // Extract labels and series data from response
+        const fetchedLabels = Object.keys(data);
+        const fetchedSeries = Object.values(data);
+
+        setLabels1(fetchedLabels);
+        setSeries1(fetchedSeries);
+      } catch (error) {
+        console.error("Error fetching order count data:", error);
+      }
+    };
+
+    fetchOrderCount();
+  }, []);
+
+  const [productCount, setProductCount] = useState({});
+
+  useEffect(() => {
+    const fetchProductCount = async () => {
+      try {
+        const response = await axios.get(
+          "https://diamondstoreapi.azurewebsites.net/api/Products/ProductCount"
+        );
+        const data = response.data;
+        setProductCount(data);
+      } catch (error) {
+        console.error("Error fetching product count data:", error);
+      }
+    };
+
+    fetchProductCount();
+  }, []);
+
+  const [series2, setSeries2] = useState([
+    {
+      name: "Revenue",
+      data: [],
+    },
+  ]);
+
+  useEffect(() => {
+    const fetchRevenueData = async () => {
+      try {
+        const response = await axios.get(
+          "https://diamondstoreapi.azurewebsites.net/api/Order/GetRevenuePerMonthOfYear?year=2024"
+        );
+        const data = response.data;
+
+        // Assuming the response data is an array of revenues for each month
+        setSeries2([
+          {
+            name: "Revenue",
+            data: data,
+          },
+        ]);
+      } catch (error) {
+        console.error("Error fetching revenue data:", error);
+      }
+    };
+
+    fetchRevenueData();
+  }, []);
+
+  const [mostSoldProduct, setMostSoldProduct] = useState("");
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("");
+  const [monthError, setMonthError] = useState("");
+
+  const handleFetchData = async () => {
+    if (month < 1 || month > 12) {
+      setMonthError("Month must be between 1 and 12");
+      return;
+    } else {
+      setMonthError("");
+    }
+
+    try {
+      // Fetching most sold product data
+      const productResponse = await axios.get(
+        `https://diamondstoreapi.azurewebsites.net/api/Products/GetMostSoldProductCategoryMonthYear?Month=${month}&Year=${year}`
+      );
+      const productData = productResponse.data;
+      setMostSoldProduct(productData);
+      console.log(productData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const [series3, setSeries3] = useState([
+    {
+      name: "Delivered Orders",
+      data: [],
+    },
+  ]);
+
+  useEffect(() => {
+    const fetchDeliveryData = async () => {
+      try {
+        const response = await axios.get(
+          `https://diamondstoreapi.azurewebsites.net/api/Order/GetNumberDeliveriedOrderPerMonthOfYear?year=2024`
+        );
+        const data = response.data;
+        setSeries3([
+          {
+            name: "Delivered Orders",
+            data: data,
+          },
+        ]);
+        console.log();
+      } catch (error) {
+        console.error("Error fetching delivery data:", error);
+      }
+    };
+
+    fetchDeliveryData();
+  }, []);
+
+  // const options2 = {
+  //   chart: {
+  //     type: 'line',
+  //     height: 'auto',
+  //   },
+  //   xaxis: {
+  //     categories: [
+  //       "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  //       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  //     ],
+  //   },
+  //   yaxis: {
+  //     labels: {
+  //       formatter: (value) => value.toFixed(2),
+  //     },
+  //   },
+  // };
+
+  const options = {
+    chart: {
+      type: "line",
+      height: "auto",
+    },
+    xaxis: {
+      categories: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ],
+    },
+    yaxis: {
+      labels: {
+        formatter: (value) => value.toFixed(2),
+      },
+    },
+  };
+
   const handleEditClick = (item, type) => {
     setEditingCard(item.Id || item.materialID);
     setEditedPrices({
@@ -314,34 +493,43 @@ const ManagerPage = () => {
         "https://diamondstoreapi.azurewebsites.net/api/Products"
       );
       const data = await response.json();
-      const formattedData = data.map((item) => ({
-        id: item.ProductId,
-        CategoryID: item.CategoryID,
-        GemCost: item.GemCost,
-        ProductionCost: item.ProductionCost,
-        GemId: item.GemId,
-        Weight: item.Weight,
-        PriceRate: item.PriceRate,
-        MaterialId: item.MaterialId,
-        ProductId: item.ProductId,
-        ProductName: item.ProductName,
-        ProductCode: item.ProductCode,
-        Description: item.Description,
-        Category: item.Category,
-        Material: item.Material,
-        GemOrigin: item.GemOrigin,
-        CaratWeight: item.CaratWeight,
-        Clarity: item.Clarity,
-        Color: item.Color,
-        Cut: item.Cut,
-        ProductSize: item.ProductSize,
-        Image: item.Image,
-        Status: item.Status ? "Available" : "Unavailable",
-        UnitSizePrice: item.UnitSizePrice,
-        Gender: item.Gender,
-        ProductPrice: item.ProductPrice,
-      }));
-      setRows(formattedData);
+
+      // Log the data to see its structure
+      console.log("API Data:", data);
+
+      if (Array.isArray(data.Products)) {
+        const formattedData = data.Products.map((item) => ({
+          id: item.ProductId,
+          CategoryID: item.CategoryID,
+          GemCost: item.GemCost,
+          ProductionCost: item.ProductionCost,
+          GemId: item.GemId,
+          Weight: item.Weight,
+          PriceRate: item.PriceRate,
+          MaterialId: item.MaterialId,
+          ProductId: item.ProductId,
+          ProductName: item.ProductName,
+          ProductCode: item.ProductCode,
+          Description: item.Description,
+          Category: item.Category,
+          Material: item.Material,
+          GemOrigin: item.GemOrigin,
+          CaratWeight: item.CaratWeight,
+          Clarity: item.Clarity,
+          Color: item.Color,
+          Cut: item.Cut,
+          ProductSize: item.ProductSize,
+          Image: item.Image,
+          Status: item.Status ? "Available" : "Unavailable",
+          UnitSizePrice: item.UnitSizePrice,
+          Gender: item.Gender,
+          ProductPrice: item.ProductPrice,
+        }));
+        setRows(formattedData);
+      } else {
+        console.error("Expected an array but got:", data);
+      }
+
       setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -478,90 +666,149 @@ const ManagerPage = () => {
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <Card>
-                <Typography variant="h6">Employees Info</Typography>
+                <Typography variant="h6">Revenue</Typography>
                 <Chart
-                  options={data.options}
-                  series={data.series}
+                  options={options}
+                  series={series2}
                   type="line"
+                  height="auto"
                 />
               </Card>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} md={6}>
               <Card>
-                <Typography variant="h6">Total Employees</Typography>
-                <Typography variant="h4">423</Typography>
+                <Typography variant="h6">Orders</Typography>
+                <Chart
+                  options={options}
+                  series={series3}
+                  type="line"
+                  height="auto"
+                />
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Card>
+                <Typography variant="h6">Order Count</Typography>
                 <Chart
                   options={{
                     chart: {
                       type: "donut",
                     },
-                    labels: ["Man", "Women"],
+                    labels: labels1,
                   }}
-                  series={[60, 40]}
+                  series={series1}
                   type="donut"
                 />
               </Card>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} md={6}>
               <Card>
-                <Typography variant="h6">Applications</Typography>
-                <Typography variant="h4">1546</Typography>
+                <Typography variant="h6">Customer Ranking</Typography>
+                <Chart
+                  options={{
+                    chart: {
+                      type: "donut",
+                    },
+                    labels: labels,
+                  }}
+                  series={series}
+                  type="donut"
+                />
               </Card>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Box p={2}>
+                <Typography variant="h6" gutterBottom>
+                  Thông số chung
+                </Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <Card>
+                      <CardContent>
+                        <Box display="flex" alignItems="center">
+                          <ShoppingCartIcon fontSize="large" />
+                          <Box ml={2}>
+                            <Typography variant="subtitle1">
+                              Tổng Sản Phẩm
+                            </Typography>
+                            <Typography variant="h5">
+                              {productCount.TotalProducts}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Card>
+                      <CardContent>
+                        <Box display="flex" alignItems="center">
+                          <ShoppingCartIcon fontSize="large" />
+                          <Box ml={2}>
+                            <Typography variant="subtitle1">
+                              Sản Phẩm Đã Bán
+                            </Typography>
+                            <Typography variant="h5">
+                              {productCount.SoldProducts}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                  {/* Add more cards as needed */}
+                </Grid>
+              </Box>
             </Grid>
             <Grid item xs={12} md={6}>
               <Card>
-                <Typography variant="h6">Employees Availability</Typography>
-                <List>
-                  <ListItem>
-                    <ListItemText primary="Attendance" />
-                    <Typography variant="body2">400</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText primary="Late Coming" />
-                    <Typography variant="body2">17</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText primary="Absent" />
-                    <Typography variant="body2">6</Typography>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText primary="Leave Apply" />
-                    <Typography variant="body2">14</Typography>
-                  </ListItem>
-                </List>
-              </Card>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Card>
-                <Typography variant="h6">Top Hiring Sources</Typography>
-              </Card>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Card>
-                <Typography variant="h6">Upcoming Interviews</Typography>
-                <List>
-                  <ListItem>
-                    <Avatar src="/broken-image.jpg" />
-                    <ListItemText
-                      primary="Natalie Gibson"
-                      secondary="1.30 - 1.30 (Ui/UX Designer)"
+                <Box
+                  p={2}
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <FormControl
+                    error={!!monthError}
+                    style={{ marginRight: "16px" }}
+                  >
+                    <TextField
+                      label="Month"
+                      variant="outlined"
+                      type="number"
+                      value={month}
+                      onChange={(e) => setMonth(e.target.value)}
+                      InputProps={{ inputProps: { min: 1, max: 12 } }}
                     />
-                  </ListItem>
-                  <ListItem>
-                    <Avatar src="/broken-image.jpg" />
-                    <ListItemText
-                      primary="Peter Piperg"
-                      secondary="9.00 - 1.30 (Web Design)"
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <Avatar src="/broken-image.jpg" />
-                    <ListItemText
-                      primary="Robert Young"
-                      secondary="1.30 - 2.30"
-                    />
-                  </ListItem>
-                </List>
+                    {monthError && (
+                      <FormHelperText>{monthError}</FormHelperText>
+                    )}
+                  </FormControl>
+                  <TextField
+                    label="Year"
+                    variant="outlined"
+                    type="number"
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    style={{ marginRight: "16px" }}
+                  />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleFetchData}
+                  >
+                    Execute
+                  </Button>
+                </Box>
+                <Box mt={4}>
+                  <Card>
+                    <Typography variant="h6" gutterBottom>
+                      Most Sold Product
+                    </Typography>
+                    <Typography variant="body1">{mostSoldProduct}</Typography>
+                  </Card>
+                </Box>
               </Card>
             </Grid>
           </Grid>
@@ -575,6 +822,7 @@ const ManagerPage = () => {
             <FormControl fullWidth margin="normal">
               <InputLabel>Cut</InputLabel>
               <Select value={cut} onChange={handleCutChange}>
+                <MenuItem value="">All</MenuItem>
                 <MenuItem value="Excellent">Excellent</MenuItem>
                 <MenuItem value="Very Good">Very Good</MenuItem>
                 <MenuItem value="Good">Good</MenuItem>
@@ -583,6 +831,7 @@ const ManagerPage = () => {
             <FormControl fullWidth margin="normal">
               <InputLabel>Clarity</InputLabel>
               <Select value={clarity} onChange={handleClarityChange}>
+                <MenuItem value="">All</MenuItem>
                 <MenuItem value="IF">IF</MenuItem>
                 <MenuItem value="VVS1">VVS1</MenuItem>
                 <MenuItem value="VVS2">VVS2</MenuItem>
@@ -597,6 +846,7 @@ const ManagerPage = () => {
             <FormControl fullWidth margin="normal">
               <InputLabel>Color</InputLabel>
               <Select value={color} onChange={handleColorChange}>
+                <MenuItem value="">All</MenuItem>
                 <MenuItem value="D">D</MenuItem>
                 <MenuItem value="E">E</MenuItem>
                 <MenuItem value="F">F</MenuItem>
@@ -612,6 +862,7 @@ const ManagerPage = () => {
             <FormControl fullWidth margin="normal">
               <InputLabel>Origin</InputLabel>
               <Select value={origin} onChange={handleOriginChange}>
+                <MenuItem value="">All</MenuItem>
                 <MenuItem value="Synthetic">Synthetic</MenuItem>
                 <MenuItem value="Natural">Natural</MenuItem>
               </Select>
@@ -741,6 +992,13 @@ const ManagerPage = () => {
                         }
                       >
                         Save
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={handleCloseClick}
+                      >
+                        Close
                       </Button>
                     </Box>
                   ) : (

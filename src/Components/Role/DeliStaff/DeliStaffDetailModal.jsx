@@ -1,19 +1,40 @@
 import React, { useEffect, useState } from "react";
-import Box from "@mui/material/Box";
-import { DataGrid } from "@mui/x-data-grid";
-import { Modal, Typography } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import {
+  Box,
+  Grid,
+  Typography,
+  Paper,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
+  CircularProgress,
+  Button,
+  Snackbar,
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { DataGrid } from "@mui/x-data-grid";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-const DeliStaffDetailModal = ({ open, handleClose, orderId }) => {
+const DeliStaffDetailPage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "info",
+  });
 
   useEffect(() => {
-    if (open && orderId) {
-      fetchOrderDetails(orderId);
-    }
-  }, [open, orderId]);
+    fetchOrderDetails(id);
+  }, [id]);
 
   const fetchOrderDetails = async (orderId) => {
     try {
@@ -25,115 +46,184 @@ const DeliStaffDetailModal = ({ open, handleClose, orderId }) => {
       setOrder(response.data);
     } catch (err) {
       setError(err.message);
-      console.error("Error fetching order details:", err);
+      setSnackbar({
+        open: true,
+        message: "Error fetching order details",
+        severity: "error",
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  const theme = createTheme({
+    palette: {
+      background: {
+        paper: "#fff",
+      },
+    },
+  });
+
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="order-detail-title"
-      aria-describedby="order-detail-description"
-    >
-      <Box sx={modalStyle}>
+    <ThemeProvider theme={theme}>
+      <Box sx={{ p: 3, bgcolor: "background.paper" }}>
+        <Button
+          onClick={() => navigate(-1)}
+          sx={{ mb: 2 }}
+          startIcon={<ArrowBackIcon />}
+        >
+          Return
+        </Button>
+        <Typography variant="h4" gutterBottom>
+          Order detail #{id}
+        </Typography>
         {loading ? (
-          <Typography>Loading...</Typography>
-        ) : error ? (
-          <Typography>Error: {error}</Typography>
-        ) : order ? (
-          <>
-            <Typography id="order-detail-title" variant="h6" component="h2">
-              Order Details
-            </Typography>
-            <Typography variant="subtitle1">
-              Order ID: {order.OrderID}
-            </Typography>
-            <Typography variant="subtitle1">
-              Customer Name: {order.CustomerName}
-            </Typography>
-            <Typography variant="subtitle1">
-              Customer Phone: {order.CustomerPhone}
-            </Typography>
-            <Typography variant="subtitle1">
-              Address: {order.Address}
-            </Typography>
-            <Typography variant="subtitle1">
-              Discount Rate: {order.DiscountRate * 100}%
-            </Typography>
-            <Typography variant="subtitle1">
-              Final Price: {order.FinalPrice}$
-            </Typography>
-            <Typography variant="subtitle1">
-              Deposits: {order.Deposits}$
-            </Typography>
-            <Typography variant="subtitle1">
-              Shipping Date: {order.ShippingDate}
-            </Typography>
-            <Typography variant="subtitle1">
-              Receive Date: {order.ReceiveDate}
-            </Typography>
-            <div style={{ height: 500, width: "100%", marginTop: "16px" }}>
-              <DataGrid
-                rows={order.products.map((product, index) => ({
-                  ...product,
-                  id: index,
-                }))}
-                columns={[
-                  {
-                    field: "Image",
-                    headerName: "Image",
-                    width: 150,
-                    renderCell: (params) => (
-                      <img
-                        src={params.value}
-                        alt="Product"
-                        style={{ width: "100%", height: "auto" }}
-                      />
-                    ),
-                  },
-                  {
-                    field: "ProductName",
-                    headerName: "Product Name",
-                    width: 196,
-                  },
-                  { field: "Material", headerName: "Material", width: 196 },
-                  {
-                    field: "CustomizedSize",
-                    headerName: "Customized Size",
-                    width: 196,
-                  },
-                  { field: "Quantity", headerName: "Quantity", width: 196 },
-                  { field: "Price", headerName: "Price", width: 196 },
-                ]}
-                pageSize={5}
-                rowHeight={130}
-                rowsPerPageOptions={[5]}
-              />
-            </div>
-          </>
+          <CircularProgress />
         ) : (
-          <Typography id="order-detail-description" sx={{ mt: 2 }}>
-            No order details available.
-          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Paper sx={{ p: 2 }}>
+                <Typography variant="h6">Thông tin chung</Typography>
+                <Divider sx={{ my: 2 }} />
+                {order && (
+                  <List>
+                    <ListItem>
+                      <ListItemText
+                        primary="Khách hàng"
+                        secondary={order.CustomerName}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary="Điện thoại"
+                        secondary={order.CustomerPhone}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary="Địa chỉ"
+                        secondary={order.Address}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary="Ngày đặt hàng"
+                        secondary={order.OrderDate}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary="Phương thức thanh toán"
+                        secondary={order.Payment}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary="Tình trạng thanh toán"
+                        secondary={order.OrderStatus}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary="Giảm giá"
+                        secondary={`${order.DiscountRate * 100}%`}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary="Giá cuối cùng"
+                        secondary={`${order.FinalPrice}$`}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary="Tiền cọc"
+                        secondary={`${order.Deposits}$`}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary="Ngày giao hàng"
+                        secondary={order.ShippingDate}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary="Ngày nhận hàng"
+                        secondary={order.ReceiveDate}
+                      />
+                    </ListItem>
+                  </List>
+                )}
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Paper sx={{ p: 2, mt: 2 }}>
+                <Typography variant="h6">Chi tiết đơn hàng</Typography>
+                <Divider sx={{ my: 2 }} />
+                {order && (
+                  <div style={{ height: 500, width: "100%" }}>
+                    <DataGrid
+                      rows={order.products.map((product, index) => ({
+                        ...product,
+                        id: index,
+                      }))}
+                      columns={[
+                        {
+                          field: "Image",
+                          headerName: "Image",
+                          width: 150,
+                          renderCell: (params) => (
+                            <img
+                              src={params.value}
+                              alt="Product"
+                              style={{ width: "100%", height: "auto" }}
+                            />
+                          ),
+                        },
+                        {
+                          field: "ProductName",
+                          headerName: "Product Name",
+                          width: 196,
+                        },
+                        {
+                          field: "Material",
+                          headerName: "Material",
+                          width: 196,
+                        },
+                        {
+                          field: "CustomizedSize",
+                          headerName: "Customized Size",
+                          width: 196,
+                        },
+                        {
+                          field: "Quantity",
+                          headerName: "Quantity",
+                          width: 196,
+                        },
+                        { field: "Price", headerName: "Price", width: 196 },
+                      ]}
+                      pageSize={5}
+                      rowHeight={130}
+                      rowsPerPageOptions={[5]}
+                    />
+                  </div>
+                )}
+              </Paper>
+            </Grid>
+          </Grid>
         )}
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={6000}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          message={snackbar.message}
+          severity={snackbar.severity}
+        />
       </Box>
-    </Modal>
+    </ThemeProvider>
   );
 };
 
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 1200,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
-
-export default DeliStaffDetailModal;
+export default DeliStaffDetailPage;

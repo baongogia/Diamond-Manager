@@ -304,16 +304,17 @@ const AccountManagement = () => {
             value={formValues.LastName}
             onChange={handleInputChange}
           />
-          <TextField
-            margin="dense"
-            name="Role"
-            label="Role"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formValues.Role}
-            onChange={handleInputChange}
-          />
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Role</InputLabel>
+            <Select
+              name="Role"
+              value={formValues.Role}
+              onChange={handleInputChange}
+            >
+              <MenuItem value="SaleStaff">SaleStaff</MenuItem>
+              <MenuItem value="Shipper">Shipper</MenuItem>
+            </Select>
+          </FormControl>
           <FormControl fullWidth margin="dense">
             <InputLabel>Gender</InputLabel>
             <Select

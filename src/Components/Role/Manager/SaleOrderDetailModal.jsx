@@ -38,6 +38,12 @@ const SaleOrderDetailModal = ({ open, handleClose, orderId }) => {
       onClose={handleClose}
       aria-labelledby="order-detail-title"
       aria-describedby="order-detail-description"
+      sx={{
+        display: "flex",
+        p: 1,
+        alignItems: "center",
+        justifyContent: "center",
+      }}
     >
       <Box sx={modalStyle}>
         {loading ? (

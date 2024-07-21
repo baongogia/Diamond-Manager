@@ -9,6 +9,7 @@ import Hide from "./Components/Hide";
 import ManageListProduct from "./Components/Role/Admin/ManageListProduct";
 import { StaffActionProvider } from "./Components/Role/SaleStaff/StaffActionProvider";
 import SaleOrderDetailModal from "./Components/Role/SaleStaff/SaleOrderDetailModal";
+import DeliStaffDetailModal from "./Components/Role/DeliStaff/DeliStaffDetailModal";
 
 function App() {
   return (
@@ -20,11 +21,13 @@ function App() {
         <Routes>
           <Route path="/AdminPage" element={<AdminPage />} />
           <Route path="/DeliStaffPage" element={<DeliStaffPage />} />
+          <Route path="DeliStaffPage/DeliStaffDetailModal/:id" element={<DeliStaffDetailModal />} />
           <Route path="/ManagerPage" element={<ManagerPage />} />
           <Route path="/SaleStaffPage" element={<SaleStaffPage />} />
           <Route path="/ManageListProduct" element={<ManageListProduct />} />
+          
           <Route
-            path="/SaleOrderDetailModal"
+            path="SaleStaffPage/SaleOrderDetailModal/:id"
             element={<SaleOrderDetailModal />}
           />
         </Routes>
