@@ -1,11 +1,19 @@
 import React, { useState, useContext, useEffect } from "react";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
-import { TextField, Button } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Paper,
+  Typography,
+  IconButton,
+  Grid,
+} from "@mui/material";
 import { StaffActionContext } from "../SaleStaff/StaffActionProvider";
 import axios from "axios";
-import DeliStaffDetailModal from "./DeliStaffDetailModal";
 import { useNavigate } from "react-router-dom";
+import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
 
 export const Order = () => {
   const { confirmedOrders, setConfirmedOrders } =
@@ -16,6 +24,7 @@ export const Order = () => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
   const navigate = useNavigate();
+
   useEffect(() => {
     const storedConfirmedOrders = localStorage.getItem("confirmedOrders");
     if (storedConfirmedOrders) {
@@ -44,12 +53,12 @@ export const Order = () => {
   const isOrderConfirmed = (orderId) => confirmedOrders.includes(orderId);
 
   const columns = [
-    { field: "OrderID", headerName: "ID", width: 70 },
-    { field: "CustomerName", headerName: "Customer", width: 130 },
-    { field: "OrderDate", headerName: "Order Date", width: 130 },
-    { field: "ReceiveDate", headerName: "Receive Date", width: 130 },
-    { field: "ShippingDate", headerName: "Shipping Date", width: 130 },
-    { field: "CustomerPhone", headerName: "Phone", width: 130 },
+    { field: "OrderID", headerName: "ID", width: 40 },
+    { field: "CustomerName", headerName: "Customer", width: 110 },
+    { field: "OrderDate", headerName: "Order Date", width: 105 },
+    { field: "ReceiveDate", headerName: "Receive Date", width: 105 },
+    { field: "ShippingDate", headerName: "Shipping Date", width: 105 },
+    { field: "CustomerPhone", headerName: "Phone", width: 110 },
     { field: "Address", headerName: "Address", width: 200 },
     { field: "TotalPrice", headerName: "Total Price", width: 130 },
     {
@@ -61,9 +70,9 @@ export const Order = () => {
     {
       field: "action",
       headerName: "Action",
-      width: 200,
+      width: 250,
       renderCell: (params) => (
-        <div>
+        <Box display="flex" justifyContent="space-between" width="100%">
           {params.row.OrderStatus === "Pending Delivery" && (
             <>
               <Button
@@ -128,7 +137,7 @@ export const Order = () => {
               </Button>
             </>
           )}
-        </div>
+        </Box>
       ),
     },
   ];
@@ -250,27 +259,54 @@ export const Order = () => {
   });
 
   return (
-    <div style={{ height: 500, width: "100%" }}>
-      <Box sx={{ mb: 2 }}>
-        <TextField
-          label="Search by Order Date"
-          variant="outlined"
-          value={searchDate}
-          onChange={handleSearchChange}
+    <Box sx={{ p: 2 }}>
+      <Paper sx={{ p: 2, mb: 2, width: "96%" }}>
+        <Typography variant="h6" gutterBottom>
+          Orders
+        </Typography>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} sm={8}>
+            <TextField
+              label="Search by Order Date"
+              variant="outlined"
+              value={searchDate}
+              onChange={handleSearchChange}
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <IconButton onClick={() => setSearchDate("")}>
+                    <ClearIcon />
+                  </IconButton>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              startIcon={<SearchIcon />}
+              onClick={() => console.log("Searching...")}
+            >
+              Search
+            </Button>
+          </Grid>
+        </Grid>
+      </Paper>
+      <Paper sx={{ height: 500, width: "96%", p: 2 }}>
+        <DataGrid
+          rows={filteredRows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 5 },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
+          onRowClick={handleRowClick}
         />
-      </Box>
-      <DataGrid
-        rows={filteredRows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
-          },
-        }}
-        pageSizeOptions={[5, 10]}
-        // checkboxSelection
-        onRowClick={handleRowClick}
-      />
-    </div>
+      </Paper>
+    </Box>
   );
 };

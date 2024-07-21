@@ -161,17 +161,6 @@ const AccountManagement = () => {
   };
 
   const columns = [
-    { field: "UserName", headerName: "Username", width: 150 },
-    { field: "FirstName", headerName: "First Name", width: 150 },
-    { field: "LastName", headerName: "Last Name", width: 150 },
-    { field: "Role", headerName: "Role", width: 150 },
-    { field: "Gender", headerName: "Gender", width: 100 },
-    { field: "Birthday", headerName: "Birthday", width: 150 },
-    { field: "Email", headerName: "Email", width: 200 },
-    { field: "PhoneNumber", headerName: "Phone Number", width: 150 },
-    { field: "Address", headerName: "Address", width: 200 },
-    { field: "Ranking", headerName: "Ranking", width: 100 },
-    { field: "DiscountRate", headerName: "Discount Rate", width: 150 },
     {
       field: "Status",
       headerName: "Status",
@@ -184,6 +173,18 @@ const AccountManagement = () => {
         />
       ),
     },
+    { field: "UserName", headerName: "Username", width: 150 },
+    { field: "FirstName", headerName: "First Name", width: 150 },
+    { field: "LastName", headerName: "Last Name", width: 150 },
+    { field: "Role", headerName: "Role", width: 150 },
+    { field: "Gender", headerName: "Gender", width: 100 },
+    { field: "Birthday", headerName: "Birthday", width: 150 },
+    { field: "Email", headerName: "Email", width: 200 },
+    { field: "PhoneNumber", headerName: "Phone Number", width: 150 },
+    { field: "Address", headerName: "Address", width: 200 },
+    { field: "Ranking", headerName: "Ranking", width: 100 },
+    { field: "DiscountRate", headerName: "Discount Rate", width: 150 },
+
     // {
     //   field: 'actions',
     //   headerName: 'Actions',
@@ -220,7 +221,7 @@ const AccountManagement = () => {
   };
 
   return (
-    <Box sx={{ height: "100vh", width: "100%" }}>
+    <Box sx={{ height: "84vh", width: "100%" }}>
       <Tabs value={currentTab} onChange={handleTabChange}>
         <Tab label="All Accounts" />
         <Tab label="Customers" />
@@ -231,7 +232,7 @@ const AccountManagement = () => {
         variant="contained"
         startIcon={<AddIcon />}
         onClick={() => setOpen(true)}
-        sx={{ marginBottom: "10px" }}
+        sx={{ marginBottom: "10px", marginTop: "10px" }}
       >
         Add Account
       </Button>

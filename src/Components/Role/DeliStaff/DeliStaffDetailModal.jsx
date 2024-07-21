@@ -19,6 +19,7 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { DataGrid } from "@mui/x-data-grid";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ClimbingBoxLoader } from "react-spinners";
 
 const DeliStaffDetailPage = () => {
   const { id } = useParams();
@@ -64,6 +65,14 @@ const DeliStaffDetailPage = () => {
     },
   });
 
+  if (loading) {
+    return (
+      <div className="w-screen h-screen bg-white absolute top-0 left-0 flex items-center justify-center">
+        <ClimbingBoxLoader size={25} color="#38970f" />
+      </div>
+    );
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ p: 3, bgcolor: "background.paper" }}>
@@ -78,92 +87,100 @@ const DeliStaffDetailPage = () => {
           Order detail #{id}
         </Typography>
         {loading ? (
-          <CircularProgress />
+          <div className=""></div>
         ) : (
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Paper sx={{ p: 2 }}>
-                <Typography variant="h6">Thông tin chung</Typography>
+              <Paper className="-translate-y-16" sx={{ p: 2 }}>
+                <Typography variant="h6">General Information</Typography>
                 <Divider sx={{ my: 2 }} />
                 {order && (
-                  <List>
-                    <ListItem>
-                      <ListItemText
-                        primary="Khách hàng"
-                        secondary={order.CustomerName}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText
-                        primary="Điện thoại"
-                        secondary={order.CustomerPhone}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText
-                        primary="Địa chỉ"
-                        secondary={order.Address}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText
-                        primary="Ngày đặt hàng"
-                        secondary={order.OrderDate}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText
-                        primary="Phương thức thanh toán"
-                        secondary={order.Payment}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText
-                        primary="Tình trạng thanh toán"
-                        secondary={order.OrderStatus}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText
-                        primary="Giảm giá"
-                        secondary={`${order.DiscountRate * 100}%`}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText
-                        primary="Giá cuối cùng"
-                        secondary={`${order.FinalPrice}$`}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText
-                        primary="Tiền cọc"
-                        secondary={`${order.Deposits}$`}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText
-                        primary="Ngày giao hàng"
-                        secondary={order.ShippingDate}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText
-                        primary="Ngày nhận hàng"
-                        secondary={order.ReceiveDate}
-                      />
-                    </ListItem>
-                  </List>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      <List>
+                        <ListItem>
+                          <ListItemText
+                            primary="Customer"
+                            secondary={order.CustomerName}
+                          />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText
+                            primary="Phone Number"
+                            secondary={order.CustomerPhone}
+                          />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText
+                            primary="Address"
+                            secondary={order.Address}
+                          />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText
+                            primary="Order date"
+                            secondary={order.OrderDate}
+                          />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText
+                            primary="Payment method"
+                            secondary={order.Payment}
+                          />
+                        </ListItem>
+                      </List>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <List>
+                        <ListItem>
+                          <ListItemText
+                            primary="Order Status"
+                            secondary={order.OrderStatus}
+                          />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText
+                            primary="Discount"
+                            secondary={`${order.DiscountRate * 100}%`}
+                          />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText
+                            primary="Final price"
+                            secondary={`${order.FinalPrice.toFixed(2)}$`}
+                          />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText
+                            primary="Deposit"
+                            secondary={`${order.Deposits.toFixed(2)}$`}
+                          />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText
+                            primary="Shipping date"
+                            secondary={order.ShippingDate}
+                          />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText
+                            primary="Receive date"
+                            secondary={order.ReceiveDate}
+                          />
+                        </ListItem>
+                      </List>
+                    </Grid>
+                  </Grid>
                 )}
               </Paper>
             </Grid>
 
             <Grid item xs={12}>
-              <Paper sx={{ p: 2, mt: 2 }}>
-                <Typography variant="h6">Chi tiết đơn hàng</Typography>
+              <Paper className="-translate-y-20" sx={{ p: 2, mt: 2 }}>
+                <Typography variant="h6">Order Details</Typography>
                 <Divider sx={{ my: 2 }} />
                 {order && (
-                  <div style={{ height: 500, width: "100%" }}>
+                  <div style={{ height: 243, width: "100%" }}>
                     <DataGrid
                       rows={order.products.map((product, index) => ({
                         ...product,
@@ -178,14 +195,18 @@ const DeliStaffDetailPage = () => {
                             <img
                               src={params.value}
                               alt="Product"
-                              style={{ width: "100%", height: "auto" }}
+                              style={{
+                                width: "100%",
+                                height: "auto",
+                                borderRadius: "50%",
+                              }}
                             />
                           ),
                         },
                         {
                           field: "ProductName",
                           headerName: "Product Name",
-                          width: 196,
+                          width: 250,
                         },
                         {
                           field: "Material",

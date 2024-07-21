@@ -1,8 +1,22 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import { DataGrid } from "@mui/x-data-grid";
-import { Modal, Typography } from "@mui/material";
+import { Modal, Typography, Paper } from "@mui/material";
 import axios from "axios";
+import { ClimbingBoxLoader } from "react-spinners";
+import OrderIcon from "@mui/icons-material/Receipt";
+import PersonIcon from "@mui/icons-material/Person";
+import PhoneIcon from "@mui/icons-material/Phone";
+import AddressIcon from "@mui/icons-material/Home";
+import DiscountIcon from "@mui/icons-material/LocalOffer";
+import PriceIcon from "@mui/icons-material/AttachMoney";
+import DepositIcon from "@mui/icons-material/AccountBalance";
+import ShippingIcon from "@mui/icons-material/LocalShipping";
+import ReceiveIcon from "@mui/icons-material/EventAvailable";
+import TransactionIcon from "@mui/icons-material/Payment";
+import EmailIcon from "@mui/icons-material/Email";
+import PaymentIcon from "@mui/icons-material/Payment";
 
 const SaleOrderDetailModal = ({ open, handleClose, orderId }) => {
   const [order, setOrder] = useState(null);
@@ -22,15 +36,23 @@ const SaleOrderDetailModal = ({ open, handleClose, orderId }) => {
       const response = await axios.get(
         `https://diamondstoreapi.azurewebsites.net/api/Order/GetOrderInfo?id=${orderId}`
       );
-      console.log("Order data:", response.data); // Debug: Print API response
+      console.log("Order data:", response.data);
       setOrder(response.data);
     } catch (err) {
       setError(err.message);
-      console.error("Error fetching order details:", err); // Debug: Print error
+      console.error("Error fetching order details:", err);
     } finally {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="w-full absolute top-1/2 left-32 flex items-center justify-center">
+        <ClimbingBoxLoader size={25} color="#38970f" />
+      </div>
+    );
+  }
 
   return (
     <Modal
@@ -45,44 +67,132 @@ const SaleOrderDetailModal = ({ open, handleClose, orderId }) => {
         justifyContent: "center",
       }}
     >
-      <Box sx={modalStyle}>
+      <Paper sx={modalStyle}>
         {loading ? (
-          <Typography>Loading...</Typography>
+          <div className=""></div>
         ) : error ? (
           <Typography>Error: {error}</Typography>
         ) : order ? (
           <>
-            <Typography id="order-detail-title" variant="h6" component="h2">
+            <Typography
+              id="order-detail-title"
+              variant="h6"
+              component="h2"
+              gutterBottom
+            >
               Order Details
             </Typography>
-            <Typography variant="subtitle1" sx={{ color: "black" }}>
-              Order ID: {order.OrderID}
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Box display="flex" alignItems="center">
+                  <OrderIcon />
+                  <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                    Order ID: {order.OrderID}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box display="flex" alignItems="center">
+                  <PersonIcon />
+                  <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                    Customer Name: {order.CustomerName}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box display="flex" alignItems="center">
+                  <PhoneIcon />
+                  <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                    Customer Phone: {order.CustomerPhone}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box display="flex" alignItems="center">
+                  <AddressIcon />
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "block",
+                      ml: 1,
+                    }}
+                  >
+                    Address: {order.Address}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box display="flex" alignItems="center">
+                  <DiscountIcon />
+                  <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                    Discount Rate: {order.DiscountRate * 100}%
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box display="flex" alignItems="center">
+                  <PriceIcon />
+                  <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                    Final Price: {order.FinalPrice.toFixed(2)}$
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box display="flex" alignItems="center">
+                  <DepositIcon />
+                  <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                    Deposits: {order.Deposits.toFixed(2)}$
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box display="flex" alignItems="center">
+                  <ShippingIcon />
+                  <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                    Shipping Date: {order.ShippingDate}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box display="flex" alignItems="center">
+                  <ReceiveIcon />
+                  <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                    Receive Date: {order.ReceiveDate}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box display="flex" alignItems="center">
+                  <TransactionIcon />
+                  <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                    Transaction ID: {order.TransactionID}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box display="flex" alignItems="center">
+                  <EmailIcon />
+                  <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                    Payer Email: {order.PayerEmail}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box display="flex" alignItems="center">
+                  <PaymentIcon />
+                  <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                    Payment Status: {order.PaymentStatus}
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+            <Typography variant="h6" component="h3" gutterBottom sx={{ mt: 2 }}>
+              Products
             </Typography>
-            <Typography variant="subtitle1" sx={{ color: "black" }}>
-              Customer Name: {order.CustomerName}
-            </Typography>
-            <Typography variant="subtitle1" sx={{ color: "black" }}>
-              Customer Phone: {order.CustomerPhone}
-            </Typography>
-            <Typography variant="subtitle1" sx={{ color: "black" }}>
-              Address: {order.Address}
-            </Typography>
-            <Typography variant="subtitle1" sx={{ color: "black" }}>
-              Discount Rate: {order.DiscountRate * 100}%
-            </Typography>
-            <Typography variant="subtitle1" sx={{ color: "black" }}>
-              Final Price: {order.FinalPrice}$
-            </Typography>
-            <Typography variant="subtitle1" sx={{ color: "black" }}>
-              Deposits: {order.Deposits}$
-            </Typography>
-            <Typography variant="subtitle1" sx={{ color: "black" }}>
-              Shipping Date: {order.ShippingDate}
-            </Typography>
-            <Typography variant="subtitle1" sx={{ color: "black" }}>
-              Receive Date: {order.ReceiveDate}
-            </Typography>
-            <div style={{ height: 500, width: "100%", marginTop: "16px" }}>
+            <div style={{ height: 250, width: "100%" }}>
               <DataGrid
                 rows={order.products.map((product, index) => ({
                   ...product,
@@ -91,32 +201,43 @@ const SaleOrderDetailModal = ({ open, handleClose, orderId }) => {
                 columns={[
                   {
                     field: "Image",
-                    headerName: "Image",
-                    width: 150,
+                    headerName: "Product Image",
+                    width: 115,
                     renderCell: (params) => (
                       <img
                         src={params.value}
                         alt="Product"
-                        style={{ width: "100%", height: "auto" }}
+                        style={{
+                          width: "70px",
+                          height: "70px",
+                          borderRadius: "50%",
+                          margin: "5px auto",
+                        }}
                       />
                     ),
                   },
                   {
                     field: "ProductName",
                     headerName: "Product Name",
-                    width: 196,
+                    width: 190,
                   },
-                  { field: "Material", headerName: "Material", width: 196 },
+                  { field: "Material", headerName: "Material", width: 100 },
                   {
                     field: "CustomizedSize",
                     headerName: "Customized Size",
-                    width: 196,
+                    width: 140,
                   },
-                  { field: "Quantity", headerName: "Quantity", width: 196 },
-                  { field: "Price", headerName: "Price", width: 196 },
+                  { field: "Quantity", headerName: "Quantity", width: 100 },
+                  {
+                    field: "Price",
+                    headerName: "Price",
+                    width: 100,
+                    valueFormatter: ({ value }) =>
+                      `$${Number(value).toFixed(2)}`,
+                  },
                 ]}
                 pageSize={5}
-                rowHeight={130}
+                rowHeight={80}
                 rowsPerPageOptions={[5]}
               />
             </div>
@@ -126,7 +247,7 @@ const SaleOrderDetailModal = ({ open, handleClose, orderId }) => {
             No order details available.
           </Typography>
         )}
-      </Box>
+      </Paper>
     </Modal>
   );
 };
@@ -136,7 +257,9 @@ const modalStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 1200,
+  width: 800,
+  maxHeight: "80vh",
+  overflowY: "auto",
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,

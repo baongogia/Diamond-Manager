@@ -1026,7 +1026,7 @@ const ManagerPage = () => {
         );
       case "Product Management":
         return (
-          <Box sx={{ height: "100vh", width: "100%" }}>
+          <Box sx={{ height: "90vh", width: "100%" }}>
             <Button
               variant="contained"
               startIcon={<AddIcon />}
@@ -1047,6 +1047,7 @@ const ManagerPage = () => {
               }}
               pageSizeOptions={[5, 10, 20]}
               loading={loading}
+              rowHeight={125}
               getRowId={(row) => row.ProductId}
             />
             <Dialog open={open} onClose={handleClose}>
@@ -1290,7 +1291,18 @@ const ManagerPage = () => {
             {sidebarOpen && <ListItemText primary="Account Management" />}
           </ListItem>
 
-          <LogoutButton sidebarOpen={sidebarOpen} buttonText="Manager Logout" />
+          <LogoutButton
+            sidebarOpen={sidebarOpen}
+            style={{
+              background: "#fff",
+              marginTop: "47vh",
+              border: "1px solid #445c3d",
+              color: "black",
+              cursor: "pointer",
+              width: "100%",
+            }}
+            buttonText="Logout"
+          />
         </List>
       </Sidebar>
       <Content sx={{ marginLeft: sidebarOpen ? "250px" : "60px" }}>
