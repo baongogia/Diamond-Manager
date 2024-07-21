@@ -5,6 +5,7 @@ import { TextField, Button } from "@mui/material";
 import axios from "axios";
 import { StaffActionContext } from "./StaffActionProvider";
 import SaleOrderDetailModal from "./SaleOrderDetailModal";
+import { useNavigate } from "react-router-dom";
 
 export const SaleOrder = () => {
   const { confirmedOrders, setConfirmedOrders, setStaffAction } =
@@ -83,19 +84,19 @@ export const SaleOrder = () => {
           {["Pending Delivery", "Delivering", "Canceled", "Delivered"].includes(
             params.row.OrderStatus
           ) && (
-            <>
-              <Button
-                variant="contained"
-                disabled
-                style={{ marginRight: "10px" }}
-              >
-                Ready
-              </Button>
-              <Button variant="contained" disabled>
-                Cancel
-              </Button>
-            </>
-          )}
+              <>
+                <Button
+                  variant="contained"
+                  disabled
+                  style={{ marginRight: "10px" }}
+                >
+                  Ready
+                </Button>
+                <Button variant="contained" disabled>
+                  Cancel
+                </Button>
+              </>
+            )}
         </div>
       ),
     },
@@ -105,7 +106,7 @@ export const SaleOrder = () => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get(
-          "https://diamondstoreapi.azurewebsites.net/api/Order/GetOrderInfoListForSaleStaff"
+          "https://localhost:7292/api/Order/GetOrderInfoListForSaleStaff"
         );
         const ordersWithId = response.data.map((order) => ({
           ...order,
@@ -143,7 +144,7 @@ export const SaleOrder = () => {
 
     try {
       const response = await axios.put(
-        "https://diamondstoreapi.azurewebsites.net/api/Order/UpdateOrderStatus",
+        "https://localhost:7292/api/Order/UpdateOrderStatus",
         {
           orderID: id,
           buttonValue: "CONFIRM",
@@ -174,7 +175,7 @@ export const SaleOrder = () => {
 
     try {
       const response = await axios.put(
-        "https://diamondstoreapi.azurewebsites.net/api/Order/UpdateOrderStatus",
+        "https://localhost:7292/api/Order/UpdateOrderStatus",
         {
           orderID: id,
           buttonValue: "READY",
@@ -207,7 +208,7 @@ export const SaleOrder = () => {
 
     try {
       const response = await axios.put(
-        "https://diamondstoreapi.azurewebsites.net/api/Order/UpdateOrderStatus",
+        "https://localhost:7292/api/Order/UpdateOrderStatus",
         {
           orderID: id,
           buttonValue: "CANCEL",
@@ -233,10 +234,10 @@ export const SaleOrder = () => {
   const handleSearchChange = (event) => {
     setSearchDate(event.target.value);
   };
-
+  const navigate = useNavigate();
   const handleRowClick = (params) => {
+    navigate(`SaleOrderDetailModal/${params.row.OrderID}`);
     setSelectedOrder(params.row.OrderID);
-    setModalOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -268,11 +269,8 @@ export const SaleOrder = () => {
         pageSizeOptions={[5, 10]}
         onRowClick={handleRowClick}
       />
-      <SaleOrderDetailModal
-        open={modalOpen}
-        handleClose={handleCloseModal}
-        orderId={selectedOrder}
-      />
+      
     </div>
   );
 };
+

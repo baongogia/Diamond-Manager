@@ -43,7 +43,7 @@ const AccountManagement = () => {
 
   useEffect(() => {
     fetchAccounts(
-      "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetAccountList"
+      "https://localhost:7292/api/Accounts/GetAccountList"
     );
   }, []);
 
@@ -78,7 +78,7 @@ const AccountManagement = () => {
     } else {
       try {
         const response = await axios.post(
-          "https://diamondstoreapi.azurewebsites.net/api/Accounts/RegisterStaff",
+          "https://localhost:7292/api/Accounts/RegisterStaff",
           formValues
         );
         if (response.status === 200) {
@@ -118,22 +118,22 @@ const AccountManagement = () => {
     switch (newValue) {
       case 0:
         fetchAccounts(
-          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetAccountList"
+          "https://localhost:7292/api/Accounts/GetAccountList"
         );
         break;
       case 1:
         fetchAccounts(
-          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetCustomerList"
+          "https://localhost:7292/api/Accounts/GetCustomerList"
         );
         break;
       case 2:
         fetchAccounts(
-          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetSaleStaffList"
+          "https://localhost:7292/api/Accounts/GetSaleStaffList"
         );
         break;
       case 3:
         fetchAccounts(
-          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetShipperList"
+          "https://localhost:7292/api/Accounts/GetShipperList"
         );
         break;
       default:
@@ -144,7 +144,7 @@ const AccountManagement = () => {
   const handleStatusToggle = async (username, currentStatus) => {
     try {
       const response = await axios.put(
-        "https://diamondstoreapi.azurewebsites.net/api/Accounts/UpdateAccountStatus",
+        "https://localhost:7292/api/Accounts/UpdateAccountStatus",
         {
           Username: username,
           Status: !currentStatus,
@@ -152,7 +152,7 @@ const AccountManagement = () => {
       );
       if (response.status === 200) {
         fetchAccounts(
-          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetAccountList"
+          "https://localhost:7292/api/Accounts/GetAccountList"
         );
       }
     } catch (error) {
@@ -304,16 +304,17 @@ const AccountManagement = () => {
             value={formValues.LastName}
             onChange={handleInputChange}
           />
-          <TextField
-            margin="dense"
-            name="Role"
-            label="Role"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formValues.Role}
-            onChange={handleInputChange}
-          />
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Role</InputLabel>
+            <Select
+              name="Role"
+              value={formValues.Role}
+              onChange={handleInputChange}
+            >
+              <MenuItem value="SaleStaff">SaleStaff</MenuItem>
+              <MenuItem value="Shipper">Shipper</MenuItem>
+            </Select>
+          </FormControl>
           <FormControl fullWidth margin="dense">
             <InputLabel>Gender</InputLabel>
             <Select

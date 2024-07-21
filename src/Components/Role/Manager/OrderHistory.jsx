@@ -27,7 +27,7 @@ export const OrderHistory = () => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get(
-          "https://diamondstoreapi.azurewebsites.net/api/Order/GetOrderInfoListForSaleStaff"
+          "https://localhost:7292/api/Order/GetOrderInfoListForSaleStaff"
         );
         const ordersWithId = response.data.map((order) => ({
           ...order,

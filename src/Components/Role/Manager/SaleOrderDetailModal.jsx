@@ -20,7 +20,7 @@ const SaleOrderDetailModal = ({ open, handleClose, orderId }) => {
       setLoading(true);
       setError(null);
       const response = await axios.get(
-        `https://diamondstoreapi.azurewebsites.net/api/Order/GetOrderInfo?id=${orderId}`
+        `https://localhost:7292/api/Order/GetOrderInfo?id=${orderId}`
       );
       console.log("Order data:", response.data); // Debug: Print API response
       setOrder(response.data);
@@ -38,6 +38,12 @@ const SaleOrderDetailModal = ({ open, handleClose, orderId }) => {
       onClose={handleClose}
       aria-labelledby="order-detail-title"
       aria-describedby="order-detail-description"
+      sx={{
+        display: 'flex',
+        p: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
     >
       <Box sx={modalStyle}>
         {loading ? (
@@ -46,6 +52,7 @@ const SaleOrderDetailModal = ({ open, handleClose, orderId }) => {
           <Typography>Error: {error}</Typography>
         ) : order ? (
           <>
+          
             <Typography id="order-detail-title" variant="h6" component="h2">
               Order Details
             </Typography>
