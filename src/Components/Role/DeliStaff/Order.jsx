@@ -64,7 +64,7 @@ export const Order = () => {
     {
       field: "OrderStatus",
       headerName: "Status",
-      width: 160,
+      width: 140,
       renderCell: (params) => <div>{params.value || "Pending Delivery"}</div>,
     },
     {
@@ -72,7 +72,13 @@ export const Order = () => {
       headerName: "Action",
       width: 250,
       renderCell: (params) => (
-        <Box display="flex" justifyContent="space-between" width="100%">
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          width="100%"
+          height="100%"
+        >
           {params.row.OrderStatus === "Pending Delivery" && (
             <>
               <Button
@@ -260,7 +266,7 @@ export const Order = () => {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Paper sx={{ p: 2, mb: 2, width: "96%" }}>
+      <Paper sx={{ p: 2, mb: 2, width: "98%" }}>
         <Typography variant="h6" gutterBottom>
           Orders
         </Typography>
@@ -294,7 +300,7 @@ export const Order = () => {
           </Grid>
         </Grid>
       </Paper>
-      <Paper sx={{ height: 500, width: "96%", p: 2 }}>
+      <Paper sx={{ height: 500, width: "98%", p: 2 }}>
         <DataGrid
           rows={filteredRows}
           columns={columns}

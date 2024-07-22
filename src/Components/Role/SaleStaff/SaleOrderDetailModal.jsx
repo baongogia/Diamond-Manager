@@ -418,8 +418,9 @@ const OrderDetail = () => {
             onClose={() => setSnackbar({ ...snackbar, open: false })}
             severity={snackbar.severity}
             sx={{
-              bgcolor: snackbar.severity === "success" ? "green" : "red",
+              bgcolor: snackbar.severity === "success" ? "#034008" : "#592617",
               color: "white",
+              opacity: "20%",
             }}
           >
             {snackbar.severity === "success" ? (

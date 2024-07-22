@@ -30,12 +30,19 @@ export const SaleOrder = () => {
       headerName: "Action",
       width: 200,
       renderCell: (params) => (
-        <Box display="flex" justifyContent="space-between" width="100%">
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          width="100%"
+          height="100%"
+        >
           {params.row.OrderStatus === "Processing" && (
             <>
               <Button
                 variant="contained"
                 color="primary"
+                sx={{ marginRight: "5px" }}
                 onClick={(event) => {
                   event.stopPropagation();
                   handleConfirmOrder(params.id);
@@ -135,6 +142,9 @@ export const SaleOrder = () => {
   const handleConfirmOrder = async (id) => {
     const username = localStorage.getItem("username");
     const role = localStorage.getItem("role");
+    const shippingDate = new Date();
+    const receivedDate = new Date();
+    receivedDate.setDate(receivedDate.getDate() + 2);
 
     try {
       const response = await axios.put(
@@ -144,8 +154,8 @@ export const SaleOrder = () => {
           buttonValue: "CONFIRM",
           username,
           role,
-          shippingdate: new Date(),
-          receievedate: new Date(),
+          shippingdate: shippingDate,
+          receievedate: receivedDate,
         }
       );
 
@@ -166,6 +176,9 @@ export const SaleOrder = () => {
   const handleReadyOrder = async (id) => {
     const username = localStorage.getItem("username");
     const role = localStorage.getItem("role");
+    const shippingDate = new Date();
+    const receivedDate = new Date();
+    receivedDate.setDate(receivedDate.getDate() + 2);
 
     try {
       const response = await axios.put(
@@ -175,8 +188,8 @@ export const SaleOrder = () => {
           buttonValue: "READY",
           username,
           role,
-          shippingdate: new Date(),
-          receievedate: new Date(),
+          shippingdate: shippingDate,
+          receievedate: receivedDate,
         }
       );
 
