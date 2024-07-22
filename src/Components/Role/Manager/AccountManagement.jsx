@@ -55,6 +55,7 @@ const AccountManagement = () => {
       const formattedData = response.data.map((account) => ({
         ...account,
         Birthday: dayjs(account.Birthday).format("YYYY-MM-DD"),
+        id: account.AccountId, // Ensure each row has a unique id
       }));
       setRows(formattedData);
     } catch (error) {
@@ -78,10 +79,9 @@ const AccountManagement = () => {
         formValues
       );
       if (response.status === 200) {
-        setRows([
-          ...rows,
-          { ...formValues, AccountId: response.data.AccountId },
-        ]);
+        fetchAccounts(
+          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetAccountList"
+        );
       }
     } catch (error) {
       console.error("Error saving account:", error);
@@ -237,7 +237,7 @@ const AccountManagement = () => {
         }}
         pageSizeOptions={[5, 10, 20]}
         loading={loading}
-        getRowId={(row) => row.AccountId}
+        getRowId={(row) => row.AccountId} // Ensure each row has a unique id
       />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add Account</DialogTitle>
