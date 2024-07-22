@@ -22,8 +22,9 @@ import dayjs from "dayjs";
 
 const AccountManagement = () => {
   const [open, setOpen] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
+
   const [formValues, setFormValues] = useState({
+    AccountId: "",
     Username: "",
     FirstName: "",
     LastName: "",
@@ -42,9 +43,7 @@ const AccountManagement = () => {
   const [currentTab, setCurrentTab] = useState(0);
 
   useEffect(() => {
-    fetchAccounts(
-      "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetAccountList"
-    );
+    fetchAccounts("https://localhost:7292/api/Accounts/GetAccountList");
   }, []);
 
   const fetchAccounts = async (url) => {
@@ -66,38 +65,34 @@ const AccountManagement = () => {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormValues({ ...formValues, [name]: value });
+    console.log(formValues);
+    console.log(event.target);
   };
 
   const handleSaveClickAccount = async () => {
-    if (isEdit) {
-      setRows(
-        rows.map((row) =>
-          row.AccountId === formValues.AccountId ? formValues : row
-        )
+    try {
+      const response = await axios.post(
+        "https://localhost:7292/api/Accounts/RegisterStaff",
+        formValues
       );
-    } else {
-      try {
-        const response = await axios.post(
-          "https://diamondstoreapi.azurewebsites.net/api/Accounts/RegisterStaff",
-          formValues
-        );
-        if (response.status === 200) {
-          setRows([
-            ...rows,
-            { ...formValues, AccountId: response.data.AccountId },
-          ]);
-        }
-      } catch (error) {
-        console.error("Error saving account:", error);
+      if (response.status === 200) {
+        setRows([
+          ...rows,
+          { ...formValues, AccountId: response.data.AccountId },
+        ]);
       }
+    } catch (error) {
+      console.error("Error saving account:", error);
     }
+
     setOpen(false);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setIsEdit(false);
+
     setFormValues({
+      AccountId: "",
       Username: "",
       FirstName: "",
       LastName: "",
@@ -117,24 +112,16 @@ const AccountManagement = () => {
     setCurrentTab(newValue);
     switch (newValue) {
       case 0:
-        fetchAccounts(
-          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetAccountList"
-        );
+        fetchAccounts("https://localhost:7292/api/Accounts/GetAccountList");
         break;
       case 1:
-        fetchAccounts(
-          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetCustomerList"
-        );
+        fetchAccounts("https://localhost:7292/api/Accounts/GetCustomerList");
         break;
       case 2:
-        fetchAccounts(
-          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetSaleStaffList"
-        );
+        fetchAccounts("https://localhost:7292/api/Accounts/GetSaleStaffList");
         break;
       case 3:
-        fetchAccounts(
-          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetShipperList"
-        );
+        fetchAccounts("https://localhost:7292/api/Accounts/GetShipperList");
         break;
       default:
         break;
@@ -142,18 +129,17 @@ const AccountManagement = () => {
   };
 
   const handleStatusToggle = async (username, currentStatus) => {
+    console.log(username, currentStatus);
     try {
       const response = await axios.put(
-        "https://diamondstoreapi.azurewebsites.net/api/Accounts/UpdateAccountStatus",
+        "https://localhost:7292/api/Accounts/UpdateAccountStatus",
         {
           Username: username,
           Status: !currentStatus,
         }
       );
       if (response.status === 200) {
-        fetchAccounts(
-          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetAccountList"
-        );
+        fetchAccounts("https://localhost:7292/api/Accounts/GetAccountList");
       }
     } catch (error) {
       console.error("Error updating account status:", error);
@@ -161,18 +147,7 @@ const AccountManagement = () => {
   };
 
   const columns = [
-    {
-      field: "Status",
-      headerName: "Status",
-      width: 100,
-      renderCell: (params) => (
-        <Switch
-          checked={params.value}
-          onChange={() => handleStatusToggle(params.row.Username, params.value)}
-          color="primary"
-        />
-      ),
-    },
+    { field: "AccountId", headerName: "Account ID", width: 150 },
     { field: "UserName", headerName: "Username", width: 150 },
     { field: "FirstName", headerName: "First Name", width: 150 },
     { field: "LastName", headerName: "Last Name", width: 150 },
@@ -184,7 +159,18 @@ const AccountManagement = () => {
     { field: "Address", headerName: "Address", width: 200 },
     { field: "Ranking", headerName: "Ranking", width: 100 },
     { field: "DiscountRate", headerName: "Discount Rate", width: 150 },
-
+    {
+      field: "Status",
+      headerName: "Status",
+      width: 100,
+      renderCell: (params) => (
+        <Switch
+          checked={params.value}
+          onChange={() => handleStatusToggle(params.row.UserName, params.value)}
+          color="primary"
+        />
+      ),
+    },
     // {
     //   field: 'actions',
     //   headerName: 'Actions',
@@ -210,18 +196,8 @@ const AccountManagement = () => {
     // },
   ];
 
-  const handleEditClick = (row) => {
-    setFormValues(row);
-    setIsEdit(true);
-    setOpen(true);
-  };
-
-  const handleDeleteClick = (row) => {
-    setRows(rows.filter((r) => r.AccountId !== row.AccountId));
-  };
-
   return (
-    <Box sx={{ height: "84vh", width: "100%" }}>
+    <Box sx={{ height: "100vh", width: "100%" }}>
       <Tabs value={currentTab} onChange={handleTabChange}>
         <Tab label="All Accounts" />
         <Tab label="Customers" />
@@ -232,7 +208,7 @@ const AccountManagement = () => {
         variant="contained"
         startIcon={<AddIcon />}
         onClick={() => setOpen(true)}
-        sx={{ marginBottom: "10px", marginTop: "10px" }}
+        sx={{ marginBottom: "10px" }}
       >
         Add Account
       </Button>
@@ -251,9 +227,9 @@ const AccountManagement = () => {
         getRowId={(row) => row.AccountId}
       />
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{isEdit ? "Edit Account" : "Add Account"}</DialogTitle>
+        <DialogTitle>Add Account</DialogTitle>
         <DialogContent>
-          {/* <TextField
+          <TextField
             margin="dense"
             name="AccountId"
             label="Account ID"
@@ -262,8 +238,8 @@ const AccountManagement = () => {
             variant="outlined"
             value={formValues.AccountId}
             onChange={handleInputChange}
-            disabled={isEdit}
-          /> */}
+            style={{ display: "none" }}
+          />
           <TextField
             margin="dense"
             name="Username"
