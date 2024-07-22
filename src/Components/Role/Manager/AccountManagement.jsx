@@ -373,7 +373,7 @@ const AccountManagement = () => {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleSaveClickAccount} color="primary">
+          <Button onClick={handleSaveClickAccount} color="primry">
             Save
           </Button>
         </DialogActions>
