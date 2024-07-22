@@ -42,7 +42,7 @@ export const SaleOrder = () => {
               <Button
                 variant="contained"
                 color="primary"
-                sx={{ marginRight: "5px" }}
+                sx={{ marginRight: "10px" }}
                 onClick={(event) => {
                   event.stopPropagation();
                   handleConfirmOrder(params.id);
@@ -67,6 +67,7 @@ export const SaleOrder = () => {
               <Button
                 variant="contained"
                 color="primary"
+                sx={{ marginRight: "10px" }}
                 onClick={(event) => {
                   event.stopPropagation();
                   handleReadyOrder(params.id);
