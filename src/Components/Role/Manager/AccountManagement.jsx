@@ -43,7 +43,9 @@ const AccountManagement = () => {
   const [currentTab, setCurrentTab] = useState(0);
 
   useEffect(() => {
-    fetchAccounts("https://localhost:7292/api/Accounts/GetAccountList");
+    fetchAccounts(
+      "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetAccountList"
+    );
   }, []);
 
   const fetchAccounts = async (url) => {
@@ -72,7 +74,7 @@ const AccountManagement = () => {
   const handleSaveClickAccount = async () => {
     try {
       const response = await axios.post(
-        "https://localhost:7292/api/Accounts/RegisterStaff",
+        "https://diamondstoreapi.azurewebsites.net/api/Accounts/RegisterStaff",
         formValues
       );
       if (response.status === 200) {
@@ -112,16 +114,24 @@ const AccountManagement = () => {
     setCurrentTab(newValue);
     switch (newValue) {
       case 0:
-        fetchAccounts("https://localhost:7292/api/Accounts/GetAccountList");
+        fetchAccounts(
+          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetAccountList"
+        );
         break;
       case 1:
-        fetchAccounts("https://localhost:7292/api/Accounts/GetCustomerList");
+        fetchAccounts(
+          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetCustomerList"
+        );
         break;
       case 2:
-        fetchAccounts("https://localhost:7292/api/Accounts/GetSaleStaffList");
+        fetchAccounts(
+          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetSaleStaffList"
+        );
         break;
       case 3:
-        fetchAccounts("https://localhost:7292/api/Accounts/GetShipperList");
+        fetchAccounts(
+          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetShipperList"
+        );
         break;
       default:
         break;
@@ -132,14 +142,16 @@ const AccountManagement = () => {
     console.log(username, currentStatus);
     try {
       const response = await axios.put(
-        "https://localhost:7292/api/Accounts/UpdateAccountStatus",
+        "https://diamondstoreapi.azurewebsites.net/api/Accounts/UpdateAccountStatus",
         {
           Username: username,
           Status: !currentStatus,
         }
       );
       if (response.status === 200) {
-        fetchAccounts("https://localhost:7292/api/Accounts/GetAccountList");
+        fetchAccounts(
+          "https://diamondstoreapi.azurewebsites.net/api/Accounts/GetAccountList"
+        );
       }
     } catch (error) {
       console.error("Error updating account status:", error);
@@ -147,18 +159,6 @@ const AccountManagement = () => {
   };
 
   const columns = [
-    { field: "AccountId", headerName: "Account ID", width: 150 },
-    { field: "UserName", headerName: "Username", width: 150 },
-    { field: "FirstName", headerName: "First Name", width: 150 },
-    { field: "LastName", headerName: "Last Name", width: 150 },
-    { field: "Role", headerName: "Role", width: 150 },
-    { field: "Gender", headerName: "Gender", width: 100 },
-    { field: "Birthday", headerName: "Birthday", width: 150 },
-    { field: "Email", headerName: "Email", width: 200 },
-    { field: "PhoneNumber", headerName: "Phone Number", width: 150 },
-    { field: "Address", headerName: "Address", width: 200 },
-    { field: "Ranking", headerName: "Ranking", width: 100 },
-    { field: "DiscountRate", headerName: "Discount Rate", width: 150 },
     {
       field: "Status",
       headerName: "Status",
@@ -171,6 +171,19 @@ const AccountManagement = () => {
         />
       ),
     },
+    { field: "AccountId", headerName: "Account ID", width: 100 },
+    { field: "UserName", headerName: "Username", width: 150 },
+    { field: "FirstName", headerName: "First Name", width: 150 },
+    { field: "LastName", headerName: "Last Name", width: 150 },
+    { field: "Role", headerName: "Role", width: 150 },
+    { field: "Gender", headerName: "Gender", width: 100 },
+    { field: "Birthday", headerName: "Birthday", width: 150 },
+    { field: "Email", headerName: "Email", width: 200 },
+    { field: "PhoneNumber", headerName: "Phone Number", width: 150 },
+    { field: "Address", headerName: "Address", width: 200 },
+    { field: "Ranking", headerName: "Ranking", width: 100 },
+    { field: "DiscountRate", headerName: "Discount Rate", width: 150 },
+
     // {
     //   field: 'actions',
     //   headerName: 'Actions',
@@ -197,7 +210,7 @@ const AccountManagement = () => {
   ];
 
   return (
-    <Box sx={{ height: "100vh", width: "100%" }}>
+    <Box sx={{ height: "84vh", width: "100%" }}>
       <Tabs value={currentTab} onChange={handleTabChange}>
         <Tab label="All Accounts" />
         <Tab label="Customers" />
@@ -208,7 +221,7 @@ const AccountManagement = () => {
         variant="contained"
         startIcon={<AddIcon />}
         onClick={() => setOpen(true)}
-        sx={{ marginBottom: "10px" }}
+        sx={{ marginBottom: "10px", marginTop: "10px" }}
       >
         Add Account
       </Button>

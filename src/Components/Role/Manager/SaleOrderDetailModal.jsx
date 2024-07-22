@@ -20,7 +20,7 @@ import PaymentIcon from "@mui/icons-material/Payment";
 
 const SaleOrderDetailModal = ({ open, handleClose, orderId }) => {
   const [order, setOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -30,29 +30,19 @@ const SaleOrderDetailModal = ({ open, handleClose, orderId }) => {
   }, [open, orderId]);
 
   const fetchOrderDetails = async (orderId) => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      setError(null);
       const response = await axios.get(
         `https://diamondstoreapi.azurewebsites.net/api/Order/GetOrderInfo?id=${orderId}`
       );
-      console.log("Order data:", response.data);
       setOrder(response.data);
     } catch (err) {
       setError(err.message);
-      console.error("Error fetching order details:", err);
     } finally {
       setLoading(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="w-full absolute top-1/2 left-32 flex items-center justify-center">
-        <ClimbingBoxLoader size={25} color="#38970f" />
-      </div>
-    );
-  }
 
   return (
     <Modal
@@ -69,7 +59,9 @@ const SaleOrderDetailModal = ({ open, handleClose, orderId }) => {
     >
       <Paper sx={modalStyle}>
         {loading ? (
-          <div className=""></div>
+          <div className="w-full h-[60vh] flex items-center justify-center">
+            <ClimbingBoxLoader size={34} color="#38970f" />
+          </div>
         ) : error ? (
           <Typography>Error: {error}</Typography>
         ) : order ? (
@@ -230,10 +222,8 @@ const SaleOrderDetailModal = ({ open, handleClose, orderId }) => {
                   { field: "Quantity", headerName: "Quantity", width: 100 },
                   {
                     field: "Price",
-                    headerName: "Price",
+                    headerName: "Price (USD)",
                     width: 100,
-                    valueFormatter: ({ value }) =>
-                      `$${Number(value).toFixed(2)}`,
                   },
                 ]}
                 pageSize={5}

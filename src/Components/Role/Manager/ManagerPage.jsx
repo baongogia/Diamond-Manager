@@ -289,7 +289,25 @@ const ManagerPage = () => {
 
     fetchCustomerRanking();
   }, []);
+  const [series4, setSeries4] = useState([]);
+  const [labels2, setLabels2] = useState([]);
 
+  useEffect(() => {
+    const fetchAccountCount = async () => {
+      try {
+        const response = await axios.get(
+          "https://diamondstoreapi.azurewebsites.net/api/Accounts/AccountCount"
+        );
+        const data = response.data;
+        setSeries4([data.Manager, data.Customer, data.SaleStaff, data.Shipper]);
+        setLabels2(["Manager", "Customer", "SaleStaff", "Shipper"]);
+      } catch (error) {
+        console.error("Error fetching account count data:", error);
+      }
+    };
+
+    fetchAccountCount();
+  }, []);
   const [labels1, setLabels1] = useState([]);
   const [series1, setSeries1] = useState([]);
 
@@ -579,7 +597,7 @@ const ManagerPage = () => {
         console.error("Error response from server:", error.response.data); // Log detailed server error
         alert(`Error: ${JSON.stringify(error.response.data.errors, null, 2)}`); // Display error details
       } else {
-        console.error("Error saving product:", error.message); // Log general error
+        console.error("Error saving product:", error.message); // Log orral error
         alert("Error saving product: " + error.message); // Display general error message
       }
     }
@@ -597,7 +615,23 @@ const ManagerPage = () => {
       setFormValues({ ...formValues, [name]: value });
     }
   };
+  const [revenue, setRevenue] = useState(0);
 
+  useEffect(() => {
+    const fetchRevenue = async () => {
+      try {
+        const response = await axios.get(
+          "https://diamondstoreapi.azurewebsites.net/api/Order/GetRevenue"
+        );
+        const data = response.data;
+        setRevenue(data);
+      } catch (error) {
+        console.error("Error fetching revenue data:", error);
+      }
+    };
+
+    fetchRevenue();
+  }, []);
   const handleSaveClick = async (itemId, type) => {
     const url =
       type === "gem"
@@ -686,17 +720,18 @@ const ManagerPage = () => {
                 />
               </Card>
             </Grid>
+
             <Grid item xs={12} md={6}>
               <Card>
-                <Typography variant="h6">Order Count</Typography>
+                <Typography variant="h6">Total Account</Typography>
                 <Chart
                   options={{
                     chart: {
                       type: "donut",
                     },
-                    labels: labels1,
+                    labels: labels2,
                   }}
-                  series={series1}
+                  series={series4}
                   type="donut"
                 />
               </Card>
@@ -718,48 +753,19 @@ const ManagerPage = () => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Box p={2}>
-                <Typography variant="h6" gutterBottom>
-                  Thông số chung
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                    <Card>
-                      <CardContent>
-                        <Box display="flex" alignItems="center">
-                          <ShoppingCartIcon fontSize="large" />
-                          <Box ml={2}>
-                            <Typography variant="subtitle1">
-                              Tổng Sản Phẩm
-                            </Typography>
-                            <Typography variant="h5">
-                              {productCount.TotalProducts}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Card>
-                      <CardContent>
-                        <Box display="flex" alignItems="center">
-                          <ShoppingCartIcon fontSize="large" />
-                          <Box ml={2}>
-                            <Typography variant="subtitle1">
-                              Sản Phẩm Đã Bán
-                            </Typography>
-                            <Typography variant="h5">
-                              {productCount.SoldProducts}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                  {/* Add more cards as needed */}
-                </Grid>
-              </Box>
+              <Card>
+                <Typography variant="h6">Order Count</Typography>
+                <Chart
+                  options={{
+                    chart: {
+                      type: "donut",
+                    },
+                    labels: labels1,
+                  }}
+                  series={series1}
+                  type="donut"
+                />
+              </Card>
             </Grid>
             <Grid item xs={12} md={6}>
               <Card>
@@ -809,7 +815,69 @@ const ManagerPage = () => {
                     <Typography variant="body1">{mostSoldProduct}</Typography>
                   </Card>
                 </Box>
+                <Box p={2}>
+                  <Typography color={"black"} variant="h6" gutterBottom>
+                    General Information
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <Card>
+                        <CardContent>
+                          <Box display="flex" alignItems="center">
+                            <ShoppingCartIcon fontSize="large" />
+                            <Box ml={2}>
+                              <Typography variant="subtitle1">
+                                Total Revenue
+                              </Typography>
+                              <Typography variant="h5">
+                                {revenue.toFixed(2)}$
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Card>
+                        <CardContent>
+                          <Box display="flex" alignItems="center">
+                            <ShoppingCartIcon fontSize="large" />
+                            <Box ml={2}>
+                              <Typography variant="subtitle1">
+                                Total products
+                              </Typography>
+                              <Typography variant="h5">
+                                {productCount.TotalProducts}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Card>
+                        <CardContent>
+                          <Box display="flex" alignItems="center">
+                            <ShoppingCartIcon fontSize="large" />
+                            <Box ml={2}>
+                              <Typography variant="subtitle1">
+                                Sold products
+                              </Typography>
+                              <Typography variant="h5">
+                                {productCount.SoldProducts}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    {/* Add more cards as needed */}
+                  </Grid>
+                </Box>
               </Card>
+            </Grid>
+            <Grid container spacing={2} xs={12}>
+              <Grid item xs={12} md={6}></Grid>
             </Grid>
           </Grid>
         );
